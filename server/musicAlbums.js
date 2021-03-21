@@ -89,8 +89,8 @@ module.exports = {
             obj: eventBody,
             tableName: "musicAlbums"
         }
-        let summaryOut = await DBFun(event, args, 'Insert');
-        return modelCallback(null, summaryOut);
+        let resOut = await DBFun(event, args, 'Insert');
+        return modelCallback(null, resOut);
     },
     updateMusicAlbum: async (event, modelCallback) => {
         let eventParams = event.params || {};
@@ -100,6 +100,9 @@ module.exports = {
         //validation of input variables.
         if(!albumId){
             return modelCallback("Missing albumId.")
+        }
+        if (eventBody && Object.keys(eventBody).length == 0) {
+            return modelCallback("Invalid Input - Missing Body in the Request.")
         }
         let albumName = eventBody.albumName;
         let price = eventBody.price;
@@ -123,7 +126,11 @@ module.exports = {
             obj: eventBody,
             tableName: "musicAlbums"
         }
-        let summaryOut = await DBFun(event, args, 'Update');
-        return modelCallback(null, summaryOut);
+        try{
+        await DBFun(event, args, 'Update');
+        return modelCallback(null, "Album Updated..");
+        }catch(e){
+            return modelCallback("Unable to Update Album..");
+        }
     }
 }

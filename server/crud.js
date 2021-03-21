@@ -3,7 +3,9 @@ const MongoClient = require('mongodb').MongoClient;
 
 const getDbConnections = async () => {
     return new Promise((resolve, reject) => {
+        //DB Connection Sting
         var url = "mongodb://localhost:27017/";
+        //MongoDB connection
         MongoClient.connect(url, function(err, db) {
             if (err) {return reject(err)};
             var dbo = db.db("jukebox");

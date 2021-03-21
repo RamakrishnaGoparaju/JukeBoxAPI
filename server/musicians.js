@@ -22,13 +22,13 @@ module.exports = {
         //validation of input variables. 
         let eventParams = event.params || {};
         let musicAlbumName = eventParams.musicAlbum;
-        if(!musicAlbumName){
+        if (!musicAlbumName) {
             return modelCallback("Mising musicAlbumName.")
         }
-        let query = {'albumName' : musicAlbumName}
+        let query = { 'albumName': musicAlbumName }
         let args = {
             query: query,
-            sort : {'musicianName': 1},
+            sort: { 'musicianName': 1 },
             tableName: "musicAlbums"
         }
         let resOut = await DBFun(event, args, 'Get');
@@ -59,6 +59,9 @@ module.exports = {
         let eventBody = event.body;
         let albumId = eventParams.id;
         console.debug('eventParams', eventParams)
+        if (eventBody && Object.keys(eventBody).length == 0) {
+            return modelCallback("Invalid Input - Missing Body in the Request.")
+        }
         let musicianName = eventBody.musicianName;
         //validation of input variables.
         if (musicianName.length <= 3) {
@@ -72,7 +75,11 @@ module.exports = {
             obj: eventBody,
             tableName: "musicians"
         }
-        let resOut = await DBFun(event, args, 'Update');
-        return modelCallback(null, resOut);
+        try {
+            await DBFun(event, args, 'Update');
+            return modelCallback(null, "Musician Updated..");
+        } catch (e) {
+            return modelCallback("Unable to Update Musicians..");
+        }
     }
 }
